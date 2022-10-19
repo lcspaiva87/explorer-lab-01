@@ -21,7 +21,7 @@ function setCardType(type) {
   ccLogo.setAttribute("src", `cc-${type}.svg`)
 }
 
-setCardType("hiperCard")
+setCardType("masterCard")
 globalThis.setCardType = setCardType
 //security code
 const securityCode = document.querySelector("#security-code")
@@ -37,21 +37,61 @@ const cardNumber = document.querySelector("#card-number")
 const cardNumberPattern = {
   mask: [
     {
-      mask: '0000 0000 0000 0000 000',
-      regex: /^4\d{0,15}/,
-      cardType: 'visa'
+      mask: "0000 000000 00000",
+      regex: /^3[47]\d{0,13}/,
+      cardtype: "american express",
     },
     {
-      mask: '0000 0000 0000 0000 000',
-      regex: /(^5[1-5]\d{0,2}|^22[2-9]\d|^2[3-7]\d{0,2})\d{0,12}/,
-      cardType: 'masterCard'
-    }
+      mask: "0000 0000 0000 0000",
+      regex: /^(?:6011|65\d{0,2}|64[4-9]\d?)\d{0,12}/,
+      cardtype: "discover",
+    },
+    {
+      mask: "0000 000000 0000",
+      regex: /^3(?:0([0-5]|9)|[689]\d?)\d{0,11}/,
+      cardtype: "diners",
+    },
+    {
+      mask: "0000 0000 0000 0000",
+      regex: /^(5[1-5]\d{0,2}|22[2-9]\d{0,1}|2[3-7]\d{0,2})\d{0,12}/,
+      cardtype: "mastercard",
+    },
+    {
+      mask: "0000 000000 00000",
+      regex: /^(?:2131|1800)\d{0,11}/,
+      cardtype: "jcb15",
+    },
+    {
+      mask: "0000 0000 0000 0000",
+      regex: /^(?:35\d{0,2})\d{0,12}/,
+      cardtype: "jcb",
+    },
+    {
+      mask: "0000 0000 0000 0000",
+      regex: /^(?:5[0678]\d{0,2}|6304|67\d{0,2})\d{0,12}/,
+      cardtype: "maestro",
+    },
+    {
+      mask: "0000 0000 0000 0000",
+      regex: /^4\d{0,15}/,
+      cardtype: "visa",
+    },
+    {
+      mask: "0000 0000 0000 0000",
+      regex: /^62\d{0,14}/,
+      cardtype: "unionpay",
+    },
   ],
-  dispath: function (oppended,) {
-    var nuber = 1
-  }
+  dispath: function (appended, dynamicMasked) {
+    var number = (dynamicMasked.value + appended).replace(/\D/g, "")
+    const foundMask = dynamicMasked.compiledMasks.find(function (item) {
+      return number.match(item.regex)
+    })
+    setCardType(foundMask.cardtype)
+    return foundMask.cardtype
+  },
 }
-
+const cardNumberMasked = Imask(cardNumber, cardNumberPattern)
 const expirationDate = document.querySelector("#expiration-date")
 const expirationDatePattern = {
   mask: "MM{/}YY",
@@ -59,13 +99,13 @@ const expirationDatePattern = {
     YY: {
       mask: Imask.MaskedRange,
       from: String(new Date().getFullYear()).slice(2),
-      to: String(new Date().getFullYear() + 10).slice(2)
+      to: String(new Date().getFullYear() + 10).slice(2),
     },
     MM: {
       mask: Imask.MaskedRange,
       from: 1,
-      to: 12
-    }
-  }
+      to: 12,
+    },
+  },
 }
 const expirationDateMasked = Imask(expirationDate, expirationDatePattern)
