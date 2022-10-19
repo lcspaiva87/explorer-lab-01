@@ -30,10 +30,42 @@ const securityCodePattern = {
 }
 const securityCodeMasked = Imask(securityCode, securityCodePattern)
 //card number
+
+//visa starts with 4 followed by another 15
+//^4\{0,15}
 const cardNumber = document.querySelector("#card-number")
-const cardNumberPattern = {}
+const cardNumberPattern = {
+  mask: [
+    {
+      mask: '0000 0000 0000 0000 000',
+      regex: /^4\d{0,15}/,
+      cardType: 'visa'
+    },
+    {
+      mask: '0000 0000 0000 0000 000',
+      regex: /(^5[1-5]\d{0,2}|^22[2-9]\d|^2[3-7]\d{0,2})\d{0,12}/,
+      cardType: 'masterCard'
+    }
+  ],
+  dispath: function (oppended,) {
+    var nuber = 1
+  }
+}
 
 const expirationDate = document.querySelector("#expiration-date")
-const expirationDatePatten = {
+const expirationDatePattern = {
   mask: "MM{/}YY",
+  blocks: {
+    YY: {
+      mask: Imask.MaskedRange,
+      from: String(new Date().getFullYear()).slice(2),
+      to: String(new Date().getFullYear() + 10).slice(2)
+    },
+    MM: {
+      mask: Imask.MaskedRange,
+      from: 1,
+      to: 12
+    }
+  }
 }
+const expirationDateMasked = Imask(expirationDate, expirationDatePattern)
