@@ -1,4 +1,5 @@
 import "./css/index.css"
+import Imask from "imask"
 const ccColorCard1 = document.querySelector(
   ".cc-bg svg > g g:nth-child(1) path"
 )
@@ -21,3 +22,18 @@ function setCardType(type) {
 }
 
 setCardType("hiperCard")
+globalThis.setCardType = setCardType
+//security code
+const securityCode = document.querySelector("#security-code")
+const securityCodePattern = {
+  mask: "0000",
+}
+const securityCodeMasked = Imask(securityCode, securityCodePattern)
+//card number
+const cardNumber = document.querySelector("#card-number")
+const cardNumberPattern = {}
+
+const expirationDate = document.querySelector("#expiration-date")
+const expirationDatePatten = {
+  mask: "MM{/}YY",
+}
