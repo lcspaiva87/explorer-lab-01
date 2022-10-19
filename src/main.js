@@ -47,11 +47,15 @@ const cardNumberPattern = {
       cardType: 'masterCard'
     }
   ],
-  dispath: function (oppended,) {
-    var nuber = 1
+  dispath: function (appended, dynamicMasked) {
+    var number = (dynamicMasked.value + appended.replace(/\D/g, ''))
+    const foundMask = dynamicMasked.compiledMasks.find(function (item) {
+      return number.match(item.regex)
+    })
+    console.log("foundMask:", foundMask)
   }
 }
-
+const cardNumberMasked = Imask(cardNumber, cardNumberPattern)
 const expirationDate = document.querySelector("#expiration-date")
 const expirationDatePattern = {
   mask: "MM{/}YY",
