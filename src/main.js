@@ -21,7 +21,6 @@ function setCardType(type) {
   ccLogo.setAttribute("src", `cc-${type}.svg`)
 }
 
-setCardType("masterCard")
 globalThis.setCardType = setCardType
 //security code
 const securityCode = document.querySelector("#security-code")
@@ -30,6 +29,14 @@ const securityCodePattern = {
 }
 const securityCodeMasked = Imask(securityCode, securityCodePattern)
 //card number
+securityCodeMasked.on("accept", () => {
+  updateSecurityCode(securityCodeMasked.value)
+})
+
+function updateSecurityCode(code) {
+  const ccSecurity = document.querySelector(".cc-security .value")
+  ccSecurity.innerText = code.value === 0 ? "123" : code.value
+}
 
 //visa starts with 4 followed by another 15
 //^4\{0,15}
@@ -87,11 +94,23 @@ const cardNumberPattern = {
     const foundMask = dynamicMasked.compiledMasks.find(function (item) {
       return number.match(item.regex)
     })
-    setCardType(foundMask.cardtype)
-    return foundMask.cardtype
+    return foundMask
   },
 }
+
 const cardNumberMasked = Imask(cardNumber, cardNumberPattern)
+const cardType = cardNumberMasked.masked.cardType
+setCardType(cardType)
+cardNumberMasked.on("accept", () => {
+  updateCardNumber(cardNumberMasked.value)
+})
+
+function updateCardNumber(cardNumber) {
+  const ccNumber = document.querySelector(".cc-number")
+  ccNumber.innerText =
+    cardNumber.length === 0 ? "1234 5678 9012 3456" : cardNumber
+}
+
 const expirationDate = document.querySelector("#expiration-date")
 const expirationDatePattern = {
   mask: "MM{/}YY",
@@ -109,3 +128,29 @@ const expirationDatePattern = {
   },
 }
 const expirationDateMasked = Imask(expirationDate, expirationDatePattern)
+
+expirationDateMasked.on("accept", () => {
+  updateExpiration(expirationDateMasked.value)
+})
+
+function updateExpiration(ccdate) {
+  const ccExpiration = document.querySelector(".cc-expiration .value")
+
+  ccExpiration.innerText = ccdate.length === 0 ? "31/12" : ccdate
+}
+const addButton = document.querySelector("#add-card")
+
+addButton.addEventListener("click", () => {
+  console.log("entrei aqui")
+})
+
+document.querySelector("form").addEventListener("submit", (e) => {
+  e.preventDefault()
+})
+
+const cardHolder = document.querySelector("#card-holder")
+cardHolder.addEventListener("input", () => {
+  const ccHolder = document.querySelector(".cc-holder .value")
+  ccHolder.innerText =
+    cardHolder.value.length === 0 ? "FULANO DA SILVA" : cardHolder.value
+})
