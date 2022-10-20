@@ -8,7 +8,7 @@ const ccColorCard2 = document.querySelector(
 )
 const ccLogo = document.querySelector(".cc-logo span:nth-child(2) img")
 
-function setCardType(type) {
+function setTypeCard(type) {
   console.log("type:", type)
   const colors = {
     visa: ["#436D99", "#2D57F2"],
@@ -21,7 +21,7 @@ function setCardType(type) {
   ccLogo.setAttribute("src", `cc-${type}.svg`)
 }
 
-globalThis.setCardType = setCardType
+globalThis.setTypeCard = setTypeCard
 //security code
 const securityCode = document.querySelector("#security-code")
 const securityCodePattern = {
@@ -44,61 +44,32 @@ const cardNumber = document.querySelector("#card-number")
 const cardNumberPattern = {
   mask: [
     {
-      mask: "0000 000000 00000",
-      regex: /^3[47]\d{0,13}/,
-      cardtype: "american express",
-    },
-    {
-      mask: "0000 0000 0000 0000",
-      regex: /^(?:6011|65\d{0,2}|64[4-9]\d?)\d{0,12}/,
-      cardtype: "discover",
-    },
-    {
-      mask: "0000 000000 0000",
-      regex: /^3(?:0([0-5]|9)|[689]\d?)\d{0,11}/,
-      cardtype: "diners",
-    },
-    {
-      mask: "0000 0000 0000 0000",
-      regex: /^(5[1-5]\d{0,2}|22[2-9]\d{0,1}|2[3-7]\d{0,2})\d{0,12}/,
-      cardtype: "mastercard",
-    },
-    {
-      mask: "0000 000000 00000",
-      regex: /^(?:2131|1800)\d{0,11}/,
-      cardtype: "jcb15",
-    },
-    {
-      mask: "0000 0000 0000 0000",
-      regex: /^(?:35\d{0,2})\d{0,12}/,
-      cardtype: "jcb",
-    },
-    {
-      mask: "0000 0000 0000 0000",
-      regex: /^(?:5[0678]\d{0,2}|6304|67\d{0,2})\d{0,12}/,
-      cardtype: "maestro",
-    },
-    {
       mask: "0000 0000 0000 0000",
       regex: /^4\d{0,15}/,
       cardtype: "visa",
     },
     {
       mask: "0000 0000 0000 0000",
-      regex: /^62\d{0,14}/,
-      cardtype: "unionpay",
+      regex: /(^5[1-5]\d{0,2}|^22[2-9]\d|^2[3-7]\d{0,2})\d{0,12}/,
+      cardtype: "mastercard",
+    },
+    {
+      mask: "0000 0000 0000 0000",
+      cardtype: "default",
     },
   ],
-  dispath: function (appended, dynamicMasked) {
-    var number = (dynamicMasked.value + appended).replace(/\D/g, "")
+  dispatch: function (appended, dynamicMasked) {
+    const number = (dynamicMasked.value + appended).replace(/\D/g, "")
     const foundMask = dynamicMasked.compiledMasks.find(function (item) {
       return number.match(item.regex)
     })
+    setTypeCard(foundMask.cardtype)
     return foundMask
   },
 }
 
 const cardNumberMasked = Imask(cardNumber, cardNumberPattern)
+console.log("cardNumberMasked:", cardNumberMasked)
 
 cardNumberMasked.on("accept", () => {
   updateCardNumber(cardNumberMasked.value)
